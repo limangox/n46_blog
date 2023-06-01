@@ -120,6 +120,7 @@ img {
 .title {
   font-size: 15px;
   font-weight: 600;
+  color: black !important;
 
   margin-top: 16px;
   margin-bottom: 16px;
@@ -129,7 +130,7 @@ img {
   padding: 16px 8px 8px 8px;
 }
 
-.css-1x8cf1d {
+.css-b3z5c9 {
     margin-top: 10px !important;
     margin-left: 35% !important;
 }
