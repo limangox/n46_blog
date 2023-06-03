@@ -164,7 +164,7 @@ img {
   color: #788697;
 }
 
-.css-1x8cf1d{
+.css-b3z5c9{
     border: none;
     padding: 6px 24px;
     border-radius: 30px;
@@ -181,8 +181,8 @@ img {
     cursor: pointer;
 }
 
-.css-1x8cf1d:focus,
-.css-1x8cf1d:hover {
+.css-b3z5c9:focus,
+.css-b3z5c9:hover {
   background-color: #C46ED6;
   color: #ffffff;
 }
