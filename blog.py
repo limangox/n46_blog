@@ -114,15 +114,23 @@ response = requests.get('https://www.nogizaka46.com/s/n46/api/list/blog', params
 
 css = '''<style>
 img {
-    width: 100%;
+    width: 15%;
     border-radius: 12px;
-    height: 50%;
+    height: 30%;
     aspect-ratio: 1/1;
     object-fit: cover;
+  	display: flex;
+  	position: relative;
+  	align-items: flex-end;
 }
 
 #container {
-  max-width: 50%;
+  	max-width: 50%;
+   	margin: 0 auto;
+  	margin-top: 2vh;
+  	display: flex;
+	flex-direction: column;
+  
 
   /* 在水平轴线上居中放置 container */
   margin: 0 auto;
@@ -133,10 +141,13 @@ img {
 
 .card {
   /* 修改背景色 */
+  display: flex;
+  flex-direction: column;
+  position: relative;
   background-color: white;
 
   /* 增加边框 */
-  border: 1px solid #bacdd8;
+  border: 1px solid #9e3eb2;
 
   /* 在边框和内容之间添加空白区域 */
   padding: 8px;
@@ -144,39 +155,65 @@ img {
   border-radius: 12px;
 }
 
-/* 给具有 tag class 的 div 元素添加样式 */
-.member_name {
-    display:table;
-    margin: 0 auto;
-    font-size: 16px;
-    color: #9e3eb2;
+.info-container {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    bottom: 0;
+  	right: 0;
+  	padding: 10px;
 }
 
-.blog_title {
-    font-size: 20px;
-    color: #9e3eb2;
+
+/* 给具有 tag class 的 div 元素添加样式 */
+.member_name {
+  border: 1px solid #9e3eb2;
+  box-shadow: 1px 1px 3px #9e3eb2;
+  padding: 8px;
+  border-radius: 15px;
+  display: inline-block;
+  font-size: 12px;
+  padding: 5px;
+  color: #9e3eb2;
 }
 
 .update_date {
+  border: 1px solid #9e3eb2;
+  box-shadow: 1px 1px 3px #9e3eb2;
+  padding: 8px;
+  border-radius: 15px;
+  display: inline-block;
+  padding: 5px;
   font-size: 12px;
-  display:table;
-  margin: 0 auto;
   color: #788697;
+}
+
+.blog_title {
+    position: absolute;
+  max-width: 65%;
+  word-wrap: break-word;
+  text-align: left;
+  top: 0;
+  right: 0;
+  margin: 10px;
+    font-size: 16px;
+    color: #9e3eb2;
 }
 
 .css-b3z5c9{
     border: none;
     padding: 6px 24px;
     border-radius: 30px;
-    
+
     font-weight: 600;
     color: #ffffff;
     background-color: #9e3eb2;
-    
+
     /* Button 默认是行内元素，display 属性值为 block，margin 值为 0 auto; */
     margin: 0 auto;
+    margin-top: 2px;
     display: block;
-    
+
     /* Button 是一个可点击的元素，因此需要有一个 pointer cursor */
     cursor: pointer;
 }
@@ -186,13 +223,31 @@ img {
   background-color: #C46ED6;
   color: #ffffff;
 }
+}
 
 </style>'''
 
 st.markdown(css, unsafe_allow_html=True)
 
-col1, col2, col3, col4 = st.columns(4)
 
+def member_select(select_name):
+    for i in member_list:
+        if select_name == i['name']:
+            return i['code']
+
+
+select_name = st.selectbox('选择成员', (
+    '乃木坂46', '与田 祐希', '吉田 綾乃クリスティー', '山下 美月', '向井 葉月', '中村 麗乃', '佐藤 楓', '阪口 珠美',
+    '久保 史緒里', '弓木 奈於', '松尾 美佑', '林 瑠奈', '佐藤 璃果', '黒見 明香', '清宮 レイ', '北川 悠理',
+    '金川 紗耶',
+    '矢久保 美緒', '早川 聖来', '掛橋 沙耶香', '賀喜 遥香', '筒井 あやめ', '田村 真佑', '柴田 柚菜', '遠藤 さくら',
+    '岡本 姫奈',
+    '川﨑 桜', '池田 瑛紗', '五百城 茉央', '中西 アルノ', '奥田 いろは', '冨里 奈央', '小川 彩', '菅原 咲月', '井上 和'))
+
+st_ = st.number_input('请输入页码', value=1)
+
+if st_ == 0:
+    st.warning('请输入正确页码！')
 
 def member_blog(code):
     member_headers = {
@@ -233,137 +288,51 @@ def member_blog(code):
 
     member_blog_count = member_blog_js['count']
 
-    with col1:
-        i = 0
-        try:
-            for name in range(len(member_blog_data)):
-                blog_title = member_blog_data[i]['title']
-                member_name = member_blog_data[i]['name']
-                update_date = member_blog_data[i]['date'][:16]
-                list_img = member_blog_data[i]['img']
-                blog_text = member_blog_data[i]['text']
-                sidebar = st.sidebar
-                if list_img == '/files/46/assets/img/blog/none.png':
-                    list_img = list_img.replace('/files/46/assets/img/blog/none.png',
-                                                'https://www.nogizaka46.com/files/46/assets/img/blog/none.png')
-                if '/files/' in blog_text:
-                    blog_text = blog_text.replace('/files/', 'https://www.nogizaka46.com/files/').replace('.jpg"',
-                                                                                                          '.jpg" style="width: 100%;height: 50%;"')
-                if '/images/' in blog_text:
-                    blog_text = blog_text.replace('/images/', 'https://www.nogizaka46.com/images/').replace('.jpg"',
-                                                                                                            '.jpg" style="width: 100%;height: 50%;"')
+    i = 0
+    try:
+        for name in range(len(member_blog_data)):
+            blog_title = member_blog_data[i]['title']
+            member_name = member_blog_data[i]['name']
+            update_date = member_blog_data[i]['date'][:16]
+            list_img = member_blog_data[i]['img']
+            blog_text = member_blog_data[i]['text']
+            sidebar = st.sidebar
+            if list_img == '/files/46/assets/img/blog/none.png':
+                list_img = list_img.replace('/files/46/assets/img/blog/none.png',
+                                            'https://www.nogizaka46.com/files/46/assets/img/blog/none.png')
+            if '/files/' in blog_text:
+                blog_text = blog_text.replace('/files/', 'https://www.nogizaka46.com/files/').replace('.jpg"',
+                                                                                                      '.jpg" style="width: 100%;height: 50%;"')
+            if '/images/' in blog_text:
+                blog_text = blog_text.replace('/images/', 'https://www.nogizaka46.com/images/').replace('.jpg"',
+                                                                                                        '.jpg" style="width: 100%;height: 50%;"')
 
-                st.markdown(
-                    f'<div id="container"><div class="card"><img src="{list_img}"></div><span class="member_name">{member_name}</span><span class="update_date">{update_date}</span></div></div>',
-                    unsafe_allow_html=True)
-                if st.button('查看BLOG', key=i):
-                    sidebar.write(f'<div class="blog_title">{blog_title}</div><br>' + blog_text, unsafe_allow_html=True)
-                    if sidebar.button('关闭'):
-                        sidebar.empty()
+            st.markdown(
+                f'<div id="container"><div class="card"><img src="{list_img}"><div class="blog_title">{blog_title}</div><div class="info-container"><div class="member_name">{member_name}</div>&nbsp<div class="update_date">{update_date}</div></div></div>',
+                unsafe_allow_html=True)
+            if st.button('查看BLOG', key=i):
+                sidebar.write(blog_text, unsafe_allow_html=True)
+                if sidebar.button('关闭'):
+                    sidebar.empty()
 
-                i += 4
-        except IndexError:
-            pass
-    with col2:
-        i = 1
-
-        try:
-            for name in range(len(member_blog_data)):
-                blog_title = member_blog_data[i]['title']
-                member_name = member_blog_data[i]['name']
-                update_date = member_blog_data[i]['date'][:16]
-                list_img = member_blog_data[i]['img']
-                blog_text = member_blog_data[i]['text']
-                sidebar = st.sidebar
-                if list_img == '/files/46/assets/img/blog/none.png':
-                    list_img = list_img.replace('/files/46/assets/img/blog/none.png',
-                                                'https://www.nogizaka46.com/files/46/assets/img/blog/none.png')
-                if '/files/' in blog_text:
-                    blog_text = blog_text.replace('/files/', 'https://www.nogizaka46.com/files/').replace('.jpg"',
-                                                                                                          '.jpg" style="width: 100%;height: 50%;"')
-                if '/images/' in blog_text:
-                    blog_text = blog_text.replace('/images/', 'https://www.nogizaka46.com/images/').replace('.jpg"',
-                                                                                                            '.jpg" style="width: 100%;height: 50%;"')
-
-                st.markdown(
-                    f'<div id="container"><div class="card"><img src="{list_img}"></div><span class="member_name">{member_name}</span><span class="update_date">{update_date}</span></div></div>',
-                    unsafe_allow_html=True)
-                if st.button('查看BLOG', key=i):
-                    sidebar.write(f'<div class="blog_title">{blog_title}</div><br>' + blog_text, unsafe_allow_html=True)
-                    if sidebar.button('关闭'):
-                        sidebar.empty()
-
-                i += 4
-        except IndexError:
-            pass
-
-    with col3:
-        i = 2
-
-        try:
-            for name in range(len(member_blog_data)):
-                blog_title = member_blog_data[i]['title']
-                member_name = member_blog_data[i]['name']
-                update_date = member_blog_data[i]['date'][:16]
-                list_img = member_blog_data[i]['img']
-                blog_text = member_blog_data[i]['text']
-                sidebar = st.sidebar
-                if list_img == '/files/46/assets/img/blog/none.png':
-                    list_img = list_img.replace('/files/46/assets/img/blog/none.png',
-                                                'https://www.nogizaka46.com/files/46/assets/img/blog/none.png')
-                if '/files/' in blog_text:
-                    blog_text = blog_text.replace('/files/', 'https://www.nogizaka46.com/files/').replace('.jpg"',
-                                                                                                          '.jpg" style="width: 100%;height: 50%;"')
-                if '/images/' in blog_text:
-                    blog_text = blog_text.replace('/images/', 'https://www.nogizaka46.com/images/').replace('.jpg"',
-                                                                                                            '.jpg" style="width: 100%;height: 50%;"')
-
-                st.markdown(
-                    f'<div id="container"><div class="card"><img src="{list_img}"></div><span class="member_name">{member_name}</span><span class="update_date">{update_date}</span></div></div>',
-                    unsafe_allow_html=True)
-                if st.button('查看BLOG', key=i):
-                    sidebar.write(f'<div class="blog_title">{blog_title}</div><br>' + blog_text, unsafe_allow_html=True)
-                    if sidebar.button('关闭'):
-                        sidebar.empty()
-
-                i += 4
-        except IndexError:
-            pass
-    with col4:
-        i = 3
-
-        try:
-            for name in range(len(member_blog_data)):
-                blog_title = member_blog_data[i]['title']
-                member_name = member_blog_data[i]['name']
-                update_date = member_blog_data[i]['date'][:16]
-                list_img = member_blog_data[i]['img']
-                blog_text = member_blog_data[i]['text']
-                sidebar = st.sidebar
-                if list_img == '/files/46/assets/img/blog/none.png':
-                    list_img = list_img.replace('/files/46/assets/img/blog/none.png',
-                                                'https://www.nogizaka46.com/files/46/assets/img/blog/none.png')
-                if '/files/' in blog_text:
-                    blog_text = blog_text.replace('/files/', 'https://www.nogizaka46.com/files/').replace('.jpg"',
-                                                                                                          '.jpg" style="width: 100%;height: 50%;"')
-                if '/images/' in blog_text:
-                    blog_text = blog_text.replace('/images/', 'https://www.nogizaka46.com/images/').replace('.jpg"',
-                                                                                                            '.jpg" style="width: 100%;height: 50%;"')
-
-                st.markdown(
-                    f'<div id="container"><div class="card"><img src="{list_img}"></div><span class="member_name">{member_name}</span><span class="update_date">{update_date}</span></div></div>',
-                    unsafe_allow_html=True)
-                if st.button('查看BLOG', key=i):
-                    sidebar.write(f'<div class="blog_title">{blog_title}</div><br>' + blog_text, unsafe_allow_html=True)
-                    if sidebar.button('关闭'):
-                        sidebar.empty()
-
-                i += 4
-        except IndexError:
-            pass
+            i += 1
+    except IndexError:
+        pass
 
 
 def all_blog():
+    st_num = int((st_ - 1) * 32)
+
+    params = {
+        'ima': '1116',
+        'rw': '32',
+        'st': f'{st_num}',
+        'callback': 'res',
+    }
+
+    response = requests.get('https://www.nogizaka46.com/s/n46/api/list/blog', params=params, cookies=cookies,
+                            headers=headers)
+
     if response.status_code == 200:
 
         json_data = response.content.decode().replace("res(", "")[:-2]
@@ -372,139 +341,38 @@ def all_blog():
 
         data = data_js['data']
 
-        with col1:
-            # blog列表
-            i = 0
+        # blog列表
+        i = 0
 
-            try:
-                for name in range(8):
-                    blog_title = data[i]['title']
-                    member_name = data[i]['name']
-                    update_date = data[i]['date'][:16]
-                    list_img = data[i]['img']
-                    blog_text = data[i]['text']
-                    if list_img == '/files/46/assets/img/blog/none.png':
-                        list_img = list_img.replace('/files/46/assets/img/blog/none.png',
-                                                    'https://www.nogizaka46.com/files/46/assets/img/blog/none.png')
-                    sidebar = st.sidebar
-                    if '/files/' in blog_text:
-                        blog_text = blog_text.replace('/files/', 'https://www.nogizaka46.com/files/').replace('.jpg"',
-                                                                                                              '.jpg" style="width: 100%;height: 50%;"')
-                    if '/images/' in blog_text:
-                        blog_text = blog_text.replace('/images/', 'https://www.nogizaka46.com/images/').replace('.jpg"',
-                                                                                                                '.jpg" style="width: 100%;height: 50%;"')
+        try:
+            for name in range(32):
+                blog_title = data[i]['title']
+                member_name = data[i]['name']
+                update_date = data[i]['date'][:16]
+                list_img = data[i]['img']
+                blog_text = data[i]['text']
+                if list_img == '/files/46/assets/img/blog/none.png':
+                    list_img = list_img.replace('/files/46/assets/img/blog/none.png',
+                                                'https://www.nogizaka46.com/files/46/assets/img/blog/none.png')
+                sidebar = st.sidebar
+                if '/files/' in blog_text:
+                    blog_text = blog_text.replace('/files/', 'https://www.nogizaka46.com/files/').replace('.jpg"',
+                                                                                                          '.jpg" style="width: 100%;height: 50%;"')
+                if '/images/' in blog_text:
+                    blog_text = blog_text.replace('/images/', 'https://www.nogizaka46.com/images/').replace('.jpg"',
+                                                                                                            '.jpg" style="width: 100%;height: 50%;"')
 
-                    st.markdown(
-                        f'<div id="container"><div class="card"><img src="{list_img}"></div><span class="member_name">{member_name}</span><span class="update_date">{update_date}</span></div></div>',
-                        unsafe_allow_html=True)
-                    if st.button('查看BLOG', key=i):
-                        sidebar.write(f'<div class="blog_title">{blog_title}</div><br>' + blog_text, unsafe_allow_html=True)
-                        if sidebar.button('关闭'):
-                            sidebar.empty()
+                st.markdown(
+                    f'<div id="container"><div class="card"><img src="{list_img}"><div class="blog_title">{blog_title}</div><div class="info-container"><div class="member_name">{member_name}</div>&nbsp<div class="update_date">{update_date}</div></div></div>',
+                    unsafe_allow_html=True)
+                if st.button('查看BLOG', key=i):
+                    sidebar.write(blog_text, unsafe_allow_html=True)
+                    if sidebar.button('关闭'):
+                        sidebar.empty()
 
-                    i += 4
-            except IndexError:
-                pass
-        with col2:
-            i = 1
-
-            try:
-                for name in range(8):
-                    blog_title = data[i]['title']
-                    member_name = data[i]['name']
-                    update_date = data[i]['date'][:16]
-                    list_img = data[i]['img']
-                    blog_text = data[i]['text']
-                    if list_img == '/files/46/assets/img/blog/none.png':
-                        list_img = list_img.replace('/files/46/assets/img/blog/none.png',
-                                                    'https://www.nogizaka46.com/files/46/assets/img/blog/none.png')
-                    sidebar = st.sidebar
-                    if '/files/' in blog_text:
-                        blog_text = blog_text.replace('/files/', 'https://www.nogizaka46.com/files/').replace('.jpg"',
-                                                                                                              '.jpg" style="width: 100%;height: 50%;"')
-                    if '/images/' in blog_text:
-                        blog_text = blog_text.replace('/images/', 'https://www.nogizaka46.com/images/').replace('.jpg"',
-                                                                                                                '.jpg" style="width: 100%;height: 50%;"')
-
-                    st.markdown(
-                        f'<div id="container"><div class="card"><img src="{list_img}"></div><span class="member_name">{member_name}</span><span class="update_date">{update_date}</span></div></div>',
-                        unsafe_allow_html=True)
-                    if st.button('查看BLOG', key=i):
-                        sidebar.write(f'<div class="blog_title">{blog_title}</div><br>' + blog_text,
-                                      unsafe_allow_html=True)
-                        if sidebar.button('关闭'):
-                            sidebar.empty()
-
-                    i += 4
-            except IndexError:
-                pass
-
-        with col3:
-            i = 2
-
-            try:
-                for name in range(8):
-                    blog_title = data[i]['title']
-                    member_name = data[i]['name']
-                    update_date = data[i]['date'][:16]
-                    list_img = data[i]['img']
-                    blog_text = data[i]['text']
-                    if list_img == '/files/46/assets/img/blog/none.png':
-                        list_img = list_img.replace('/files/46/assets/img/blog/none.png',
-                                                    'https://www.nogizaka46.com/files/46/assets/img/blog/none.png')
-                    sidebar = st.sidebar
-                    if '/files/' in blog_text:
-                        blog_text = blog_text.replace('/files/', 'https://www.nogizaka46.com/files/').replace('.jpg"',
-                                                                                                              '.jpg" style="width: 100%;height: 50%;"')
-                    if '/images/' in blog_text:
-                        blog_text = blog_text.replace('/images/', 'https://www.nogizaka46.com/images/').replace('.jpg"',
-                                                                                                                '.jpg" style="width: 100%;height: 50%;"')
-
-                    st.markdown(
-                        f'<div id="container"><div class="card"><img src="{list_img}"></div><span class="member_name">{member_name}</span><span class="update_date">{update_date}</span></div></div>',
-                        unsafe_allow_html=True)
-                    if st.button('查看BLOG', key=i):
-                        sidebar.write(f'<div class="blog_title">{blog_title}</div><br>' + blog_text,
-                                      unsafe_allow_html=True)
-                        if sidebar.button('关闭'):
-                            sidebar.empty()
-
-                    i += 4
-            except IndexError:
-                pass
-        with col4:
-            i = 3
-
-            try:
-                for name in range(8):
-                    blog_title = data[i]['title']
-                    member_name = data[i]['name']
-                    update_date = data[i]['date'][:16]
-                    list_img = data[i]['img']
-                    blog_text = data[i]['text']
-                    if list_img == '/files/46/assets/img/blog/none.png':
-                        list_img = list_img.replace('/files/46/assets/img/blog/none.png',
-                                                    'https://www.nogizaka46.com/files/46/assets/img/blog/none.png')
-                    sidebar = st.sidebar
-                    if '/files/' in blog_text:
-                        blog_text = blog_text.replace('/files/', 'https://www.nogizaka46.com/files/').replace('.jpg"',
-                                                                                                              '.jpg" style="width: 100%;height: 50%;"')
-                    if '/images/' in blog_text:
-                        blog_text = blog_text.replace('/images/', 'https://www.nogizaka46.com/images/').replace('.jpg"',
-                                                                                                                '.jpg" style="width: 100%;height: 50%;"')
-
-                    st.markdown(
-                        f'<div id="container"><div class="card"><img src="{list_img}"></div><span class="member_name">{member_name}</span><span class="update_date">{update_date}</span></div></div>',
-                        unsafe_allow_html=True)
-                    if st.button('查看BLOG', key=i):
-                        sidebar.write(f'<div class="blog_title">{blog_title}</div><br>' + blog_text,
-                                      unsafe_allow_html=True)
-                        if sidebar.button('关闭'):
-                            sidebar.empty()
-
-                    i += 4
-            except IndexError:
-                pass
+                i += 1
+        except IndexError:
+            pass
 
 
 if select_name == '乃木坂46':
