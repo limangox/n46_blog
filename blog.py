@@ -84,34 +84,6 @@ headers = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
 }
 
-select_name = st.selectbox('选择成员', (
-    '乃木坂46', '与田 祐希', '吉田 綾乃クリスティー', '山下 美月', '向井 葉月', '中村 麗乃', '佐藤 楓', '阪口 珠美',
-    '久保 史緒里', '弓木 奈於', '松尾 美佑', '林 瑠奈', '佐藤 璃果', '黒見 明香', '清宮 レイ', '北川 悠理', '金川 紗耶',
-    '矢久保 美緒', '早川 聖来', '掛橋 沙耶香', '賀喜 遥香', '筒井 あやめ', '田村 真佑', '柴田 柚菜', '遠藤 さくら',
-    '岡本 姫奈',
-    '川﨑 桜', '池田 瑛紗', '五百城 茉央', '中西 アルノ', '奥田 いろは', '冨里 奈央', '小川 彩', '菅原 咲月', '井上 和'),key=None)
-
-st_ = st.number_input('请输入页码：', value=1)
-
-st_num = int((st_ - 1) * 32)
-
-
-def member_select(select_name):
-    for i in member_list:
-        if select_name == i['name']:
-            return i['code']
-
-
-params = {
-    'ima': '1116',
-    'rw': '32',
-    'st': f'{st_num}',
-    'callback': 'res',
-}
-
-response = requests.get('https://www.nogizaka46.com/s/n46/api/list/blog', params=params, cookies=cookies,
-                        headers=headers)
-
 css = '''<style>
 img {
     width: 15%;
@@ -249,6 +221,7 @@ st_ = st.number_input('请输入页码', value=1)
 if st_ == 0:
     st.warning('请输入正确页码！')
 
+
 def member_blog(code):
     member_headers = {
         'authority': 'www.nogizaka46.com',
@@ -311,7 +284,7 @@ def member_blog(code):
                 f'<div id="container"><div class="card"><img src="{list_img}"><div class="blog_title">{blog_title}</div><div class="info-container"><div class="member_name">{member_name}</div>&nbsp<div class="update_date">{update_date}</div></div></div>',
                 unsafe_allow_html=True)
             if st.button('查看BLOG', key=i):
-                sidebar.write(blog_text, unsafe_allow_html=True)
+                sidebar.write(f'<div class="member_name">{member_name}</div>&nbsp<div class="update_date">{update_date}</div><br><br><br>' + blog_text, unsafe_allow_html=True)
                 if sidebar.button('关闭'):
                     sidebar.empty()
 
@@ -366,7 +339,7 @@ def all_blog():
                     f'<div id="container"><div class="card"><img src="{list_img}"><div class="blog_title">{blog_title}</div><div class="info-container"><div class="member_name">{member_name}</div>&nbsp<div class="update_date">{update_date}</div></div></div>',
                     unsafe_allow_html=True)
                 if st.button('查看BLOG', key=i):
-                    sidebar.write(blog_text, unsafe_allow_html=True)
+                    sidebar.write(f'<div class="member_name">{member_name}</div>&nbsp<div class="update_date">{update_date}</div><br><br><br>' + blog_text, unsafe_allow_html=True)
                     if sidebar.button('关闭'):
                         sidebar.empty()
 
