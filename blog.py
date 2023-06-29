@@ -172,7 +172,7 @@ css = '''<style>
     color: #9e3eb2;
 }
 
-.css-b3z5c9{
+.css-19rxjzo{
     border: none;
     padding: 6px 24px;
     border-radius: 30px;
@@ -190,8 +190,8 @@ css = '''<style>
     cursor: pointer;
 }
 
-.css-b3z5c9:focus,
-.css-b3z5c9:hover {
+.css-19rxjzo:focus,
+.css-19rxjzo:hover {
   background-color: #C46ED6;
   color: #ffffff;
 }
