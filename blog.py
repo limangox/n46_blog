@@ -268,7 +268,7 @@ def member_blog(code):
             member_name = member_blog_data[i]['name']
             update_date = member_blog_data[i]['date'][:16]
             list_img = member_blog_data[i]['img']
-            blog_text = member_blog_data[i]['text']
+            blog_text = member_blog_data[i]['text'].replace('color:rgb(49,49,49)','rgba(210, 210, 210, 0.85)')
             sidebar = st.sidebar
             if list_img == '/files/46/assets/img/blog/none.png':
                 list_img = list_img.replace('/files/46/assets/img/blog/none.png',
@@ -323,7 +323,7 @@ def all_blog():
                 member_name = data[i]['name']
                 update_date = data[i]['date'][:16]
                 list_img = data[i]['img']
-                blog_text = data[i]['text']
+                blog_text = data[i]['text'].replace('color:rgb(49,49,49)','rgba(210, 210, 210, 0.85)')
                 if list_img == '/files/46/assets/img/blog/none.png':
                     list_img = list_img.replace('/files/46/assets/img/blog/none.png',
                                                 'https://www.nogizaka46.com/files/46/assets/img/blog/none.png')
